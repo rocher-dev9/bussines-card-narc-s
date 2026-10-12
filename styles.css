@@ -117,3 +117,19 @@ body{background-image:radial-gradient(ellipse at 5% 5%,rgba(20,64,138,.30),trans
 
 /* Nombre propio en la primera línea; apellidos en la siguiente. */
 h1 .given-name { display: block; margin-inline-end: 0; }
+
+/* Dirección de la oficina: dos líneas y enlace táctil, sin columnas vacías. */
+.contacts { grid-template-columns: minmax(0, 1fr); }
+.contact#email, .contact#phone, .contact.web, .contact.address { grid-column: 1; grid-row: auto; }
+.contact.address { align-items: flex-start; white-space: normal; line-height: 1.45; }
+.contact.address > svg { margin-top: 2px; }
+.address-copy { display: block; }
+.address-copy > span { display: block; }
+
+/* Más espacio para los tres datos en pantallas horizontales de poca altura. */
+@media (max-height: 500px) and (min-width: 500px) {
+  .front { padding: 18px; }
+  .front .contacts { padding-top: 6px; }
+  .front .contact { min-height: 24px; font-size: clamp(11px, 2.6cqw, 13px); }
+  .front .contact.address { line-height: 1.35; }
+}
