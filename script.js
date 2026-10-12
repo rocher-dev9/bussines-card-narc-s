@@ -2357,6 +2357,14 @@ const CONFIG = {
   "email": "narcis.avellana@intera-group.com",
   "phone": "",
   "website": "https://www.intera-group.com",
+  "address": {
+    "street": "Carrer de Sabino Arana, 14",
+    "district": "Les Corts",
+    "city": "Barcelona",
+    "postalCode": "08028",
+    "country": "Spain"
+  },
+  "mapsUrl": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x12a49961a19d1565:0xbc743b7f64f37f27?sa=X&ved=1t:8290&ictx=111",
   "linkedin": "https://www.linkedin.com/in/narc%C3%ADs-avellana-tarrats-1454b08",
   "vcardUrl": "",
   "colors": {
@@ -2383,10 +2391,13 @@ for(const [id,value,href] of [['email',CONFIG.email,'mailto:'+CONFIG.email],['ph
  if(!value){$(id).hidden=true;$(id).style.display='none';continue;} $(id).href=href; $(id).querySelector('span').textContent=id==='website'?value.replace(/^https?:\/\//,'').replace(/\/$/,''):value;
 }
 $('linkedin').href=CONFIG.linkedin;
+$('address').href=CONFIG.mapsUrl;
+$('address-street').textContent=CONFIG.address.street;
+$('address-locality').textContent=CONFIG.address.district+', '+CONFIG.address.postalCode+' '+CONFIG.address.city;
 /* vCard 3.0: escapes, CRLF, UTF-8 y plegado a 75 octetos. */
 function escapeVCard(value){return String(value).replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,');}
 function foldLine(line){let out='',part='',length=0;for(const character of line){const n=new TextEncoder().encode(character).length;if(length+n>75){out+=part+'\r\n';part=' ';length=1;}part+=character;length+=n;}return out+part;}
-function makeVCard(){const esc=escapeVCard;return ['BEGIN:VCARD','VERSION:3.0','N:'+esc(CONFIG.familyName)+';'+esc(CONFIG.givenName)+';;;','FN:'+esc(CONFIG.name),'ORG:'+esc(CONFIG.company),'TITLE:'+esc(CONFIG.title),'EMAIL;TYPE=INTERNET,WORK:'+esc(CONFIG.email),...(CONFIG.phone?['TEL;TYPE=CELL:'+esc(CONFIG.phone)]:[]),'URL:'+esc(CONFIG.website),'END:VCARD'].map(foldLine).join('\r\n')+'\r\n';}
+function makeVCard(){const esc=escapeVCard;return ['BEGIN:VCARD','VERSION:3.0','N:'+esc(CONFIG.familyName)+';'+esc(CONFIG.givenName)+';;;','FN:'+esc(CONFIG.name),'ORG:'+esc(CONFIG.company),'TITLE:'+esc(CONFIG.title),'EMAIL;TYPE=INTERNET,WORK:'+esc(CONFIG.email),...(CONFIG.phone?['TEL;TYPE=CELL:'+esc(CONFIG.phone)]:[]),'ADR;TYPE=WORK:;'+esc(CONFIG.address.district)+';'+esc(CONFIG.address.street)+';'+esc(CONFIG.address.city)+';;'+esc(CONFIG.address.postalCode)+';'+esc(CONFIG.address.country),'URL:'+esc(CONFIG.website),'END:VCARD'].map(foldLine).join('\r\n')+'\r\n';}
 const vcard=makeVCard();
 try{const qr=qrcode(0,'M');qr.addData(CONFIG.vcardUrl||vcard,'Byte');qr.make();$('qr').innerHTML=qr.createSvgTag({cellSize:4,margin:16,scalable:true});$('qr').querySelector('svg').setAttribute('aria-hidden','true');}catch(error){$('qr').textContent='QR code unavailable';$('status').textContent='You can still save the contact using the button.';console.error(error);}
 let flipped=false;
